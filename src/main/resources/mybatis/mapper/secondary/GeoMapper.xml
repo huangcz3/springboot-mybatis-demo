@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neo.mapper.secondary.GeoMapper">
+
+    <!--手动更新数据 -->
+    <!-- 查询需要更新的经纬度 -->
+    <select id="findByCondition" resultType="com.neo.domain.GeoDO">
+        SELECT
+               id,city_name, address, longitude, latitude, update_time,CONCAT(city_name,address) AS detail
+        FROM
+             cm_geo
+        WHERE
+                `status` = 1 and longitude = 0
+        <!-- and update_time is null -->
+    </select>
+
+    <!-- 更新经纬度 -->
+    <insert id="updateLngLat" parameterType="com.neo.domain.GeoDO">
+        UPDATE cm_geo SET longitude =#{longitude},latitude=#{latitude},status = 2,update_time = now() WHERE id = #{id}
+    </insert>
+
+</mapper>

@@ -1,0 +1,87 @@
+#端口号
+server:
+  port: 8080
+spring:
+  application:
+    name: spring-boot-mybatis
+
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 500
+      minimum-idle: 50
+    primary:
+      ###sdma开发库
+      jdbcUrl: jdbc:mysql://rm-bp13v3n2k602o06wdco.mysql.rds.aliyuncs.com:3306/auto_report?useUnicode=true&characterEncoding=utf8&useSSL=false
+      username: auto_report
+      password: o0MusTV0IOXhAuwH
+    secondary:
+#      jdbcUrl: jdbc:mysql://rm-bp1485293ipwpg5ohlo.mysql.rds.aliyuncs.com:3306/compete-media?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&autoReconnect=true&allowMultiQueries=true
+#      username: competemedia
+#      password: K0GN7OmKnXs4tOK2
+      ###大客竞媒开发库
+      jdbcUrl: jdbc:mysql://rm-bp13v3n2k602o06wdco.mysql.rds.aliyuncs.com:3306/compete-media?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&autoReconnect=true&allowMultiQueries=true
+      username: compete_media
+      password: Myd8EmGeZqQZ8IsB
+
+logging:
+  config: classpath:logback-spring.xml
+  path: D:\\logs\\${spring.application.name}
+  level:
+    com:
+      neo:
+        mapper: ERROR
+
+#mybatis的配置
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/**/*.xml
+management:
+  security:
+    enabled: false
+
+#pagehelper分页插件配置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+
+map:
+  api:
+    baidu:
+      key: zT6zvwWyhV6hjKDiovwFlc2bYSGIbBQg
+      #地理编码
+      geocoder: http://api.map.baidu.com/geocoder/v2/
+      #坐标转换
+      geoconv: http://api.map.baidu.com/geoconv/v1/
+    gaode:
+      key: cf9b038c31d14e9dbc6df0f4c786b2d7
+      #地理/逆地理编码
+      geocode: https://restapi.amap.com/v3/geocode/geo
+
+
+msg:
+  email:
+    fromAddress: 18328005498@163.com
+    fromPassword: Hcz960821
+    fromHostName: smtp.163.com
+    sslOnConnect: false
+    sslSmtpPort: 25
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

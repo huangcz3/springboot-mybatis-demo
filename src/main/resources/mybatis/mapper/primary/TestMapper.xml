@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neo.mapper.primary.TestMapper">
+
+    <sql id="Base_Column_List1">
+        a.large_area,
+        a.contract_number,
+        a.signing_date,
+        a.publish_city,
+        a.achievement_city,
+        a.`year`,
+        a.`month`,
+        a.`week`,
+        a.publication_date,
+        a.revoke_date,
+        a.customer_name,
+        a.brand_name,
+        a.screen,
+        a.lenght_time,
+        a.frequency,
+        a.buy_nums,
+        a.position_nums,
+        a.contract_amount,
+        a.publication_amount,
+        a.sign_amount,
+        a.industry,
+        a.sale_name,
+        a.business_department,
+        a.cause_department,
+        a.sign_city,
+        a.payment_method,
+        a.customer_type,
+        a.second_customer_type,
+        a.sealed_each_other,
+        a.remarks
+    </sql>
+
+    <sql id="Base_Column_List2">
+        a.large_area,
+        a.contract_number,
+        a.signing_date,
+        a.publish_city,
+        a.achievement_city,
+        a.`year`,
+        a.`month`,
+        a.`week`,
+        a.publication_date,
+        a.revoke_date,
+        a.customer_name,
+        a.brand_name,
+        a.screen,
+        a.lenght_time,
+        a.frequency,
+        a.buy_nums,
+        a.position_nums,
+        a.contract_amount,
+        a.publication_amount,
+        a.sign_amount,
+        a.five_percent_management_fee,
+        a.industry,
+        a.sale_name,
+        a.business_department,
+        a.cause_department,
+        a.sign_city,
+        a.payment_method,
+        a.customer_type,
+        a.second_customer_type,
+        a.sealed_each_other,
+        a.remarks
+    </sql>
+
+    <sql id="Base_Column_List3">
+        a.large_area,
+        a.contract_number,
+        a.signing_date,
+        a.publish_city,
+        a.achievement_city,
+        a.`year`,
+        a.`month`,
+        a.`week`,
+        a.publication_date,
+        a.revoke_date,
+        a.customer_name,
+        a.brand_name,
+        a.screen,
+        a.buy_nums,
+        a.contract_amount,
+        a.publication_amount,
+        a.sign_amount,
+        a.industry,
+        a.sale_name,
+        a.business_department,
+        a.cause_department,
+        a.sign_city,
+        a.payment_method,
+        a.customer_type,
+        a.sealed_each_other,
+        a.remarks
+    </sql>
+
+
+    <select id="getArea" resultType="map">
+        SELECT * FROM area
+    </select>
+
+    <select id="getFileUploadIds" parameterType="com.neo.param.ContractDetailParam" resultType="java.lang.Long">
+        SELECT
+        substring_index(
+        group_concat(id ORDER BY upload_date DESC),
+        ',',
+        1
+        ) id
+        FROM
+        upload_report t
+        WHERE
+        t.upload_version = #{version}
+        AND t.delete_flag = 0
+        AND t.upload_type = #{dataType}
+        GROUP BY t.city
+    </select>
+
+    <!--可供下载合同明细报表的数据-->
+    <select id="contractDetailPoDataList" parameterType="map" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="Base_Column_List1"/>
+        FROM contract_detail a
+        where
+        <if test="reportIds !=null and reportIds.size()>0">
+            a.report_id in
+            <foreach collection="reportIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        limit #{startNum},#{size}
+    </select>
+
+    <!--根据reportId查询合同明细-->
+    <select id="contractDetailPoDataListByReportId" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="Base_Column_List1"/>
+        FROM
+        contract_detail a
+        WHERE
+        a.report_id = #{reportId}
+    </select>
+
+    <!--可供下载 梯视合同明细报表的数据-->
+    <select id="contractDetailTVPoDataList" parameterType="map" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="Base_Column_List2"/>
+        FROM contract_detail_elevator_tv a
+        <where>
+            <if test="reportIds !=null and reportIds.size()>0">
+                a.report_id in
+                <foreach collection="reportIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            limit #{startNum},#{size}
+        </where>
+    </select>
+
+    <!--根据reportId查询 梯视合同明细-->
+    <select id="contractDetailTVPoDataListByReportId" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="Base_Column_List2"/>
+        FROM
+        contract_detail_elevator_tv a
+        WHERE
+        a.report_id = #{reportId}
+    </select>
+
+    <!--可供下载 梯视合同明细报表的数据-->
+    <select id="contractDetailBoxPoDataList" parameterType="map" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="Base_Column_List3"/>
+        FROM contract_detail_elevator_box a
+        <where>
+            <if test="reportIds !=null and reportIds.size()>0">
+                a.report_id in
+                <foreach collection="reportIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            limit #{startNum},#{size}
+        </where>
+    </select>
+
+    <!--根据reportId查询 梯视合同明细-->
+    <select id="contractDetailBoxPoDataListByReportId" resultType="java.util.LinkedHashMap">
+        SELECT
+        <include refid="Base_Column_List3"/>
+        FROM
+        contract_detail_elevator_box a
+        WHERE
+        a.report_id = #{reportId}
+    </select>
+
+    <select id="queryContractDetailCount" parameterType="map" resultType="int">
+        select count(1) FROM contract_detail
+        <where>
+            <if test="reportIds !=null and reportIds.size()>0">
+                report_id in
+                <foreach collection="reportIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="queryContractDetailTVCount" parameterType="map" resultType="int">
+        select count(1) FROM contract_detail_elevator_tv
+        <where>
+            <if test="reportIds !=null and reportIds.size()>0">
+                report_id in
+                <foreach collection="reportIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="queryContractDetailBoxCount" parameterType="map" resultType="int">
+        select count(1) FROM contract_detail_elevator_box
+        <where>
+            <if test="reportIds !=null and reportIds.size()>0">
+                report_id in
+                <foreach collection="reportIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
+
+</mapper>
